@@ -10,7 +10,6 @@ const writer = fs.createWriteStream(destination+destFile)
 try {
     readdir(source, { withFileTypes: true })
         .then(items => {
-
             items.forEach(item => {
                 if (!item.isFile()) return;
                 if (path.extname(item.name) !== '.css') return;
@@ -21,9 +20,7 @@ try {
                     writer.write(dat);
                     stream.close()
                 })
-            })
-            //setTimeout(() => writer.write(globalStyles.join('\n')), 500)
-           
+            })      
         })
 } catch (error) {
     throw error;
