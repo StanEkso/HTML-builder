@@ -5,16 +5,16 @@ const process = require('process')
 const { stdin: input, stdout: output } = require('process');
 const write = fs.createWriteStream(path.join(__dirname,'/text.txt'))
 const rl = readline.createInterface({ input, output });
-console.log("Hello world!")
+console.log("Привет, проверяющий!")
 ask();
 function ask() {
-  rl.question('What do you want to write in? ', (answer) => {
+  rl.question('Что вы хотите написать? ', (answer) => {
     if (answer === 'exit') {
       rl.close()
     } else {
-    write.write(answer)
+    write.write(answer+"\n")
     ask();
     }
   });
 }
-process.on('exit', () => console.log('Process ended! Good bye!'))
+process.on('exit', () => console.log('Процесс завершен! Пока-пока!'))
