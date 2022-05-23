@@ -4,7 +4,32 @@ const { readdir, copyFile } = require('fs/promises')
 let templateFile = ''
 const templatePath = path.join(__dirname, '/template.html');
 const stream = fs.createReadStream(templatePath);
-const resultPath = path.join(__dirname + '/project-dist')
+const resultPath = path.join(__dirname + '/project-dist/')
+
+function copyDirectory(source, dest) {
+    console.log(source,dest)
+    readdir(source)
+        .then(items => items.forEach(item => {
+         fs.stat(path.join(source+item), (error, stats) => {
+            if (error) {
+              console.log(error);
+            }
+            else {
+            if (stats.isFile()) copyFile(source+item, dest+item)
+              else if (stats.isDirectory()) {
+                  fs.mkdir(dest+item+'/', (err) => {
+                    if (err) {
+                        return console.error(err);
+                    }
+                    console.log('Directory created successfully!');
+                  })
+                  copyDirectory(path.join(source+item+'/',dest+item+'/'))
+                }
+            }
+          }) ;
+        }))
+  }
+
 stream.on('data', (data) => templateFile += data.toString());
 stream.on('end', () => {
     const regexp = /{{\w{1,}}}/g
@@ -34,8 +59,14 @@ fs.mkdir(resultPath, (err) => {
     console.log('Directory created successfully!');
 })
 
-
-
+const assetsDir = path.join(__dirname,'/assets/')
+fs.mkdir(path.join(resultPath,'/assets/'),{recursive: true},(err) => {
+    if (err) {
+        return console.error(err);
+    }
+    console.log('Directory created successfully!');
+})
+copyDirectory(assetsDir,path.join(resultPath+'/assets/'))
 const source = path.join(__dirname+'/styles/')
 const destination = path.join(__dirname+'/project-dist/')
 const destFile = 'style.css';
@@ -60,3 +91,4 @@ try {
 } catch (error) {
     throw error;
 }
+
